@@ -1,5 +1,12 @@
 # go-grpc-foundation
 
+[![Go Version](https://img.shields.io/badge/go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/AndrewDonelson/go-grpc-foundation.svg)](https://pkg.go.dev/github.com/AndrewDonelson/go-grpc-foundation)
+[![Go Report Card](https://goreportcard.com/badge/github.com/AndrewDonelson/go-grpc-foundation?style=flat-square)](https://goreportcard.com/report/github.com/AndrewDonelson/go-grpc-foundation)
+[![GitHub stars](https://img.shields.io/github/stars/AndrewDonelson/go-grpc-foundation.svg?style=flat-square&label=stars)](https://github.com/AndrewDonelson/go-grpc-foundation/stargazers)
+[![GitHub release](https://img.shields.io/github/release/AndrewDonelson/go-grpc-foundation.svg?style=flat-square)](https://github.com/AndrewDonelson/go-grpc-foundation/releases)
+
 A production-ready foundation for building gRPC microservices in Go with best practices built-in.
 
 **Repository:** `https://github.com/AndrewDonelson/go-grpc-foundation`
@@ -597,8 +604,6 @@ MIT License - see [LICENSE](LICENSE) file for details
 ## ⭐ Show Your Support
 
 If you find this project useful, please consider giving it a star on GitHub!
-
-[![GitHub stars](https://img.shields.io/github/stars/AndrewDonelson/go-grpc-foundation.svg?style=social)](https://github.com/AndrewDonelson/go-grpc-foundation/stargazers)
 
 ---
 
