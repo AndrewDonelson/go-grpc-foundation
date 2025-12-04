@@ -49,4 +49,3 @@ func GetBool(key string) bool {
 func GetDuration(key string) interface{} {
 	return viper.Get(key)
 }
-
