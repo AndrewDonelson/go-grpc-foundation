@@ -454,19 +454,19 @@ func (s *DemoService) Chat(stream pb.DemoService_ChatServer) error {
 
 	// Use a channel to handle incoming messages
 	messageChan := make(chan *pb.ChatMessage, 10)
-	defer close(messageChan)
+	var once sync.Once
+	closeChan := func() { close(messageChan) }
 
 	// Goroutine to receive messages from client
 	go func() {
+		defer once.Do(closeChan) // Ensure channel is closed exactly once
 		for {
 			msg, err := stream.Recv()
 			if err == io.EOF {
-				close(messageChan)
 				return
 			}
 			if err != nil {
 				s.logger.Error("failed to receive chat message", zap.Error(err))
-				close(messageChan)
 				return
 			}
 

@@ -37,11 +37,14 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(COLOR_GREEN)%-20s$(COLOR_RESET) %s\n", $$1, $$2}'
 	@echo ""
 	@echo "$(COLOR_BOLD)Examples:$(COLOR_RESET)"
-	@echo "  $(COLOR_YELLOW)make build-debug$(COLOR_RESET)     - Build debug version"
-	@echo "  $(COLOR_YELLOW)make build-prod$(COLOR_RESET)      - Build production version"
+	@echo "  $(COLOR_YELLOW)make build-example$(COLOR_RESET)   - Build example binaries (server + client)"
+	@echo "  $(COLOR_YELLOW)make build-debug$(COLOR_RESET)     - Verify packages compile (library)"
+	@echo "  $(COLOR_YELLOW)make build-prod$(COLOR_RESET)      - Verify packages compile (library)"
 	@echo "  $(COLOR_YELLOW)make test$(COLOR_RESET)            - Run all tests"
 	@echo "  $(COLOR_YELLOW)make coverage$(COLOR_RESET)        - Generate and show coverage report"
 	@echo "  $(COLOR_YELLOW)make example$(COLOR_RESET)         - Run example (server + client)"
+	@echo ""
+	@echo "$(COLOR_YELLOW)Note:$(COLOR_RESET) This is a library/framework. Use 'make build-example' to build binaries."
 	@echo ""
 
 # ============================================================================
@@ -50,15 +53,17 @@ help: ## Show this help message
 
 build: build-debug ## Build debug version (default)
 
-build-debug: ## Build debug version with debug symbols (verifies compilation)
-	@echo "$(COLOR_BOLD)$(COLOR_BLUE)Building debug version...$(COLOR_RESET)"
+build-debug: ## Verify all packages compile (library - no binary produced)
+	@echo "$(COLOR_BOLD)$(COLOR_BLUE)Verifying package compilation (debug)...$(COLOR_RESET)"
 	@go build -ldflags "$(LDFLAGS_DEBUG)" ./pkg/...
-	@echo "$(COLOR_GREEN)✓ Debug build complete (all packages compile)$(COLOR_RESET)"
+	@echo "$(COLOR_GREEN)✓ All packages compile successfully$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)ℹ This is a library - no binary is produced. Use 'make build-example' for binaries.$(COLOR_RESET)"
 
-build-prod: ## Build production version (optimized, stripped - verifies compilation)
-	@echo "$(COLOR_BOLD)$(COLOR_BLUE)Building production version...$(COLOR_RESET)"
+build-prod: ## Verify all packages compile (library - no binary produced)
+	@echo "$(COLOR_BOLD)$(COLOR_BLUE)Verifying package compilation (production)...$(COLOR_RESET)"
 	@go build -ldflags "$(LDFLAGS) $(LDFLAGS_PROD)" ./pkg/...
-	@echo "$(COLOR_GREEN)✓ Production build complete (all packages compile)$(COLOR_RESET)"
+	@echo "$(COLOR_GREEN)✓ All packages compile successfully$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)ℹ This is a library - no binary is produced. Use 'make build-example' for binaries.$(COLOR_RESET)"
 
 # ============================================================================
 # Example Build Targets
@@ -118,6 +123,19 @@ example: proto-example build-example ## Run example (starts server, then runs cl
 	@echo "$(COLOR_BOLD)$(COLOR_CYAN)========================================$(COLOR_RESET)"
 	@echo "$(COLOR_BOLD)$(COLOR_CYAN)Running gRPC Communication Types Example$(COLOR_RESET)"
 	@echo "$(COLOR_BOLD)$(COLOR_CYAN)========================================$(COLOR_RESET)"
+	@echo ""
+	@echo "$(COLOR_YELLOW)Cleaning up any existing servers...$(COLOR_RESET)"
+	@if [ -f /tmp/example-server.pid ]; then \
+		kill $$(cat /tmp/example-server.pid) 2>/dev/null || true; \
+		rm -f /tmp/example-server.pid; \
+	fi
+	@if command -v lsof >/dev/null 2>&1; then \
+		lsof -ti:50051 | xargs kill -9 2>/dev/null || true; \
+	elif command -v fuser >/dev/null 2>&1; then \
+		fuser -k 50051/tcp 2>/dev/null || true; \
+	fi
+	@rm -f /tmp/example-server.log
+	@echo "$(COLOR_GREEN)✓ Cleanup complete$(COLOR_RESET)"
 	@echo ""
 	@echo "$(COLOR_YELLOW)Starting server in background...$(COLOR_RESET)"
 	@$(BUILD_DIR)/$(EXAMPLE_SERVER) > /tmp/example-server.log 2>&1 & \

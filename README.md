@@ -159,9 +159,17 @@ ENVIRONMENT=production go run cmd/myservice/main.go
 - ✅ Automatic request logging
 - ✅ Panic recovery
 
+> 💡 **See it in action:** Check out [Example Output](docs/example-output.md) to see a complete example demonstrating all 4 gRPC communication types (Unary, Server Streaming, Client Streaming, and Bidirectional Streaming) with full server logs and performance metrics.
+
 ---
 
 ## 📖 Documentation
+
+- **[Complete Guide](docs/complete-guide.md)** - Comprehensive documentation covering all features
+- **[Example Guide](docs/example-guide.md)** - Detailed example project documentation
+- **[Example Output](docs/example-output.md)** - Complete example run output
+
+### Quick Reference
 
 ### Server Configuration
 
@@ -558,6 +566,9 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 - **GitHub:** https://github.com/AndrewDonelson/go-grpc-foundation
 - **Documentation:** https://pkg.go.dev/github.com/AndrewDonelson/go-grpc-foundation
+- **Complete Guide:** [docs/complete-guide.md](docs/complete-guide.md) - Comprehensive documentation
+- **Example Guide:** [docs/example-guide.md](docs/example-guide.md) - Example project documentation
+- **Example Output:** [docs/example-output.md](docs/example-output.md) - See all 4 gRPC communication types in action
 - **Issues:** https://github.com/AndrewDonelson/go-grpc-foundation/issues
 - **Discussions:** https://github.com/AndrewDonelson/go-grpc-foundation/discussions
 
