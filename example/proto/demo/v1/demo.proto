@@ -1,0 +1,185 @@
+syntax = "proto3";
+
+package demo.v1;
+
+option go_package = "github.com/AndrewDonelson/go-grpc-foundation/example/pkg/pb;pb";
+
+import "google/protobuf/empty.proto";
+
+// DemoService demonstrates all 4 core gRPC communication patterns:
+// 1. Unary RPC (Request-Response)
+// 2. Server Streaming RPC
+// 3. Client Streaming RPC
+// 4. Bidirectional Streaming RPC
+service DemoService {
+  // ============================================================================
+  // 1. UNARY RPC (Request-Response)
+  // ============================================================================
+  // Pattern: Client sends one request, server sends one response
+  // Use Cases: REST-like APIs, CRUD operations, authentication, simple queries
+  // Characteristics: Simplest pattern, blocking, single request/response pair
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+
+  // Fire-and-Forget pattern (built on Unary with empty response)
+  // Use Cases: Logging, metrics, notifications
+  rpc LogEvent(LogEventRequest) returns (google.protobuf.Empty);
+
+  // ============================================================================
+  // 2. SERVER STREAMING RPC
+  // ============================================================================
+  // Pattern: Client sends one request, server sends stream of responses
+  // Use Cases: Paginated results, large downloads, real-time updates, events
+  // Characteristics: Server keeps connection open, sends multiple messages
+  rpc ListUsers(ListUsersRequest) returns (stream User);
+
+  // Event streaming pattern (built on Server Streaming)
+  // Use Cases: Real-time notifications, pub/sub, live updates
+  rpc SubscribeToEvents(SubscribeRequest) returns (stream Event);
+
+  // ============================================================================
+  // 3. CLIENT STREAMING RPC
+  // ============================================================================
+  // Pattern: Client sends stream of requests, server sends one response
+  // Use Cases: File uploads, batch operations, data ingestion, aggregation
+  // Characteristics: Client sends multiple messages, server waits for all
+  rpc UploadData(stream DataChunk) returns (UploadResponse);
+
+  // Batch processing pattern (built on Client Streaming)
+  // Use Cases: Bulk operations, batch imports, aggregation
+  rpc ProcessBatch(stream BatchItem) returns (BatchResult);
+
+  // ============================================================================
+  // 4. BIDIRECTIONAL STREAMING RPC
+  // ============================================================================
+  // Pattern: Both client and server send streams independently
+  // Use Cases: Chat, gaming, real-time collaboration, WebSocket-like communication
+  // Characteristics: Full duplex, independent read/write streams, most flexible
+  rpc Chat(stream ChatMessage) returns (stream ChatMessage);
+
+  // Ping-Pong pattern (built on Bidirectional with alternating messages)
+  // Use Cases: Turn-based games, interactive shells, conversational AI
+  rpc Interactive(stream Request) returns (stream Response);
+}
+
+// ============================================================================
+// Unary RPC Messages
+// ============================================================================
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+  int64 timestamp = 2;
+}
+
+message LogEventRequest {
+  string event_type = 1;
+  string message = 2;
+  map<string, string> metadata = 3;
+}
+
+// ============================================================================
+// Server Streaming Messages
+// ============================================================================
+
+message ListUsersRequest {
+  int32 page_size = 1;
+  string filter = 2; // Optional filter criteria
+}
+
+message SubscribeRequest {
+  repeated string event_types = 1; // Subscribe to specific event types
+}
+
+message Event {
+  string event_id = 1;
+  string event_type = 2;
+  string message = 3;
+  int64 timestamp = 4;
+  map<string, string> data = 5;
+}
+
+// ============================================================================
+// Client Streaming Messages
+// ============================================================================
+
+message DataChunk {
+  int32 chunk_number = 1;
+  bytes data = 2;
+  bool is_last = 3;
+}
+
+message UploadResponse {
+  bool success = 1;
+  int64 total_bytes = 2;
+  int32 chunks_received = 3;
+  string message = 4;
+}
+
+message BatchItem {
+  string item_id = 1;
+  string data = 2;
+  map<string, string> metadata = 3;
+}
+
+message BatchResult {
+  bool success = 1;
+  int32 items_processed = 2;
+  int32 items_succeeded = 3;
+  int32 items_failed = 4;
+  repeated string errors = 5;
+}
+
+// ============================================================================
+// Bidirectional Streaming Messages
+// ============================================================================
+
+message ChatMessage {
+  string message_id = 1;
+  string user_id = 2;
+  string text = 3;
+  int64 timestamp = 4;
+  MessageType type = 5;
+}
+
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_USER = 1;
+  MESSAGE_TYPE_SYSTEM = 2;
+  MESSAGE_TYPE_ECHO = 3;
+}
+
+message Request {
+  string request_id = 1;
+  string command = 2;
+  map<string, string> parameters = 3;
+}
+
+message Response {
+  string request_id = 1;
+  string result = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// ============================================================================
+// Shared Messages
+// ============================================================================
+
+message User {
+  string user_id = 1;
+  string name = 2;
+  string email = 3;
+  int64 created_at = 4;
+  UserStatus status = 5;
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
